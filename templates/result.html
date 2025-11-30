@@ -4,21 +4,25 @@
   <title>Accent Result</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
+
 <body>
 
   <div class="container">
-<h1>Detected Region: {{ region }}</h1>
-<h2 style="margin-top:-10px; color:#cccccc;">Detected Language: {{ language }}</h2>
 
-   
+    <h1>Detected Region: {{ region }}</h1>
+    <h2 style="margin-top:-10px; color:#cccccc;">Detected Language: {{ language }}</h2>
 
+    <!-- CONFIDENCE BAR CHART -->
     <canvas id="probChart"></canvas>
 
     <script>
-      const labels = {{ results|map(attribute=0)|list|tojson }};
-      const data = {{ results|map(attribute=1)|list|tojson }};
+      // Prepare Chart Inputs
+      const labels = {{ results | map(attribute=0) | list | tojson }};
+      const data = {{ results | map(attribute=1) | list | tojson }};
 
+      // Chart.js Bar Graph
       new Chart(document.getElementById('probChart'), {
         type: 'bar',
         data: {
@@ -28,21 +32,39 @@
             data: data,
             backgroundColor: '#3B82F6',
             borderColor: '#60A5FA',
-            borderWidth: 1
+            borderWidth: 1,
+            borderRadius: 6
           }]
         },
         options: {
+          responsive: true,
+          animation: {
+            duration: 900
+          },
           plugins: { 
-            legend: { labels: { color: 'white' } } 
+            legend: { 
+              labels: { color: 'white' } 
+            } 
           },
           scales: {
-            y: { beginAtZero: true, max: 100, ticks: { color: 'white' }},
-            x: { ticks: { color: 'white', maxRotation: 0, minRotation: 0 }}
+            y: { 
+              beginAtZero: true, 
+              max: 100, 
+              ticks: { color: 'white' } 
+            },
+            x: { 
+              ticks: { 
+                color: 'white',
+                maxRotation: 0, 
+                minRotation: 0 
+              } 
+            }
           }
         }
       });
     </script>
 
+    <!-- FOOD RECOMMENDATION SECTION -->
     <div class="food-section">
 
       <h3>🍽 Suggested Food Menu</h3>
@@ -85,7 +107,7 @@
 
     </div>
 
-    <a href="/">← Upload Another File</a>
+    <a href="/" style="display:block; margin-top:30px;">← Upload Another File</a>
 
   </div>
 

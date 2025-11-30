@@ -17,8 +17,17 @@ SCALER_PATH = "model/final_scaler.pkl"
 classifier = joblib.load(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
 
-processor = Wav2Vec2FeatureExtractor.from_pretrained("facebook/hubert-base-ls960")
-hubert = HubertModel.from_pretrained("facebook/hubert-base-ls960")
+# NEW: Use safetensors to avoid torch load issues on any laptop
+processor = Wav2Vec2FeatureExtractor.from_pretrained(
+    "facebook/hubert-base-ls960",
+    use_safetensors=True
+)
+
+hubert = HubertModel.from_pretrained(
+    "facebook/hubert-base-ls960",
+    use_safetensors=True
+)
+hubert.eval()
 
 # Accent → State Mapping
 ACCENTS = ["gujarati", "hindi", "kannada", "malayalam", "tamil", "telugu"]
@@ -31,7 +40,6 @@ ACCENT_TO_STATE = {
     "tamil": "Tamil Nadu",
     "telugu": "Andhra Pradesh"
 }
-
 
 # Food Recommendations Per Region
 FOOD_RECOMMENDATIONS = {
@@ -73,18 +81,28 @@ FOOD_RECOMMENDATIONS = {
     }
 }
 
-
 # -------------------------------
-# Extract HuBERT Layer 6 Embedding
+# Extract HuBERT Layer 6 Embedding (FIXED)
 # -------------------------------
 def extract_hubert_embedding(audio_path):
     y, sr = librosa.load(audio_path, sr=16000)
-    inputs = processor(y, sampling_rate=16000, return_tensors="pt", padding=True)
+
+    # FIXED: enforce batch shape + correct dtype
+    y = np.array(y, dtype=np.float32).reshape(1, -1)
+
+    inputs = processor(
+        y,
+        sampling_rate=16000,
+        return_tensors="pt",
+        padding=True
+    )
+
     with torch.no_grad():
         outputs = hubert(**inputs, output_hidden_states=True)
-    emb = outputs.hidden_states[6].squeeze().mean(dim=0).cpu().numpy()
-    return emb.reshape(1, -1)
 
+    # FIXED: correct pooling for consistent embedding
+    emb = outputs.hidden_states[6].mean(dim=1).cpu().numpy()
+    return emb.reshape(1, -1)
 
 # -------------------------------
 # Routes
@@ -93,15 +111,14 @@ def extract_hubert_embedding(audio_path):
 def index():
     return render_template("index.html")
 
-
 @app.route("/predict", methods=["POST"])
 def predict():
     if "audio" not in request.files:
         return render_template("index.html", error="No file uploaded")
 
     file = request.files["audio"]
-    path = os.path.join("uploads", file.filename)
     os.makedirs("uploads", exist_ok=True)
+    path = os.path.join("uploads", file.filename)
     file.save(path)
 
     emb = extract_hubert_embedding(path)
@@ -111,7 +128,6 @@ def predict():
     accent_idx = int(np.argmax(probs))
     accent = ACCENTS[accent_idx]
 
-    # Convert accent → Regional name for chart labels
     results = [
         (ACCENT_TO_STATE[ACCENTS[i]], float(probs[i] * 100))
         for i in range(len(ACCENTS))
@@ -119,18 +135,16 @@ def predict():
 
     foods = FOOD_RECOMMENDATIONS[accent]
     detected_region = ACCENT_TO_STATE[accent]
-    detected_language = accent.capitalize()  # Telugu, Tamil, Hindi, etc.
+    detected_language = accent.capitalize()
 
     return render_template(
-       "result.html",
+        "result.html",
         region=detected_region,
         language=detected_language,
         results=results,
         foods=foods,
         audio_file=file.filename
-)
-
-
+    )
 
 if __name__ == "__main__":
     app.run(debug=False)
