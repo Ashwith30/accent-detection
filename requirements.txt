@@ -1,14 +1,25 @@
-audioread
-Flask
-ffmpeg-python
-joblib
-librosa
-matplotlib
-numpy
-pandas
-scikit-learn
-scipy
-soundfile
-torch
-tqdm
-transformers
+# CORE
+numpy==1.26.4
+joblib==1.52
+scikit-learn==1.7.2
+
+# AUDIO PROCESSING
+librosa==0.10.1
+soundfile==0.12.1
+audioread==3.0.1
+
+# MODEL + HUGGINGFACE
+transformers==4.37.2
+tokenizers==0.15.1
+huggingface-hub==0.20.2
+
+# TORCH (CPU SAFE VERSION)
+torch==2.1.0
+torchaudio==2.1.0
+
+# WEB APP
+Flask==3.0.0
+
+# UTILITIES
+tqdm==4.66.1
+requests==2.31.0
