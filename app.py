@@ -20,9 +20,20 @@ scaler = joblib.load(SCALER_PATH)
 processor = Wav2Vec2FeatureExtractor.from_pretrained("facebook/hubert-base-ls960")
 hubert = HubertModel.from_pretrained("facebook/hubert-base-ls960")
 
+# Accent → State Mapping
 ACCENTS = ["gujarati", "hindi", "kannada", "malayalam", "tamil", "telugu"]
 
+ACCENT_TO_STATE = {
+    "gujarati": "Gujarat",
+    "hindi": "Jharkhand",
+    "kannada": "Karnataka",
+    "malayalam": "Kerala",
+    "tamil": "Tamil Nadu",
+    "telugu": "Andhra Pradesh"
+}
 
+
+# Food Recommendations Per Region
 FOOD_RECOMMENDATIONS = {
     "gujarati": {
         "breakfast": ["Thepla", "Khaman Dhokla", "Fafda Jalebi"],
@@ -63,7 +74,6 @@ FOOD_RECOMMENDATIONS = {
 }
 
 
-
 # -------------------------------
 # Extract HuBERT Layer 6 Embedding
 # -------------------------------
@@ -75,12 +85,14 @@ def extract_hubert_embedding(audio_path):
     emb = outputs.hidden_states[6].squeeze().mean(dim=0).cpu().numpy()
     return emb.reshape(1, -1)
 
+
 # -------------------------------
 # Routes
 # -------------------------------
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -99,19 +111,26 @@ def predict():
     accent_idx = int(np.argmax(probs))
     accent = ACCENTS[accent_idx]
 
-# Convert to Python float for JSON compatibility
-    results = [(ACCENTS[i], float(probs[i] * 100)) for i in range(len(ACCENTS))]
+    # Convert accent → Regional name for chart labels
+    results = [
+        (ACCENT_TO_STATE[ACCENTS[i]], float(probs[i] * 100))
+        for i in range(len(ACCENTS))
+    ]
 
     foods = FOOD_RECOMMENDATIONS[accent]
+    detected_region = ACCENT_TO_STATE[accent]
+    detected_language = accent.capitalize()  # Telugu, Tamil, Hindi, etc.
 
     return render_template(
-        "result.html",
-        accent=accent.capitalize(),
+       "result.html",
+        region=detected_region,
+        language=detected_language,
         results=results,
         foods=foods,
         audio_file=file.filename
-    )
+)
+
+
 
 if __name__ == "__main__":
     app.run(debug=False)
-

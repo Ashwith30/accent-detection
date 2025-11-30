@@ -8,8 +8,10 @@
 <body>
 
   <div class="container">
+<h1>Detected Region: {{ region }}</h1>
+<h2 style="margin-top:-10px; color:#cccccc;">Detected Language: {{ language }}</h2>
 
-    <h1>Predicted Accent: {{ accent }}</h1>
+   
 
     <canvas id="probChart"></canvas>
 
@@ -30,10 +32,12 @@
           }]
         },
         options: {
-          plugins: { legend: { labels: { color: 'white' } } },
+          plugins: { 
+            legend: { labels: { color: 'white' } } 
+          },
           scales: {
             y: { beginAtZero: true, max: 100, ticks: { color: 'white' }},
-            x: { ticks: { color: 'white' }}
+            x: { ticks: { color: 'white', maxRotation: 0, minRotation: 0 }}
           }
         }
       });
