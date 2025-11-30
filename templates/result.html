@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Accent Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>Predicted Accent: {{ accent }}</h1>
+
+    <canvas id="probChart"></canvas>
+
+    <script>
+      const labels = {{ results|map(attribute=0)|list|tojson }};
+      const data = {{ results|map(attribute=1)|list|tojson }};
+
+      new Chart(document.getElementById('probChart'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Confidence (%)',
+            data: data,
+            backgroundColor: '#3B82F6',
+            borderColor: '#60A5FA',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: { legend: { labels: { color: 'white' } } },
+          scales: {
+            y: { beginAtZero: true, max: 100, ticks: { color: 'white' }},
+            x: { ticks: { color: 'white' }}
+          }
+        }
+      });
+    </script>
+
+    <div class="food-section">
+
+      <h3>🍽 Suggested Food Menu</h3>
+
+      <div class="food-box">
+        <h4>🥞 Breakfast</h4>
+        <ul>
+          {% for item in foods.breakfast %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="food-box">
+        <h4>🍛 Lunch</h4>
+        <ul>
+          {% for item in foods.lunch %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="food-box">
+        <h4>🍽 Dinner</h4>
+        <ul>
+          {% for item in foods.dinner %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="food-box">
+        <h4>🍪 Snacks</h4>
+        <ul>
+          {% for item in foods.snacks %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+
+    <a href="/">← Upload Another File</a>
+
+  </div>
+
+</body>
+</html>

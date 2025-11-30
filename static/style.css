@@ -1,0 +1,119 @@
+/* CLASSIC PREMIUM DARK THEME */
+/* -------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #111;
+  margin: 0;
+  padding: 40px;
+  color: #E5E7EB;
+  text-align: center;
+}
+
+/* Glass Panel */
+.container {
+  max-width: 820px;
+  margin: auto;
+  background: rgba(28, 28, 30, 0.75);
+  backdrop-filter: blur(18px);
+  padding: 40px 50px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  animation: fadeIn 0.7s ease-out;
+}
+
+h1 {
+  color: #F9FAFB;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+p {
+  color: #A1A1AA;
+  font-size: 15px;
+  margin-bottom: 25px;
+}
+
+/* Input */
+input[type="file"] {
+  padding: 13px;
+  border-radius: 12px;
+  background: #1F1F22;
+  border: 1px solid #2F2F33;
+  color: #ccc;
+  width: 80%;
+  max-width: 380px;
+}
+
+/* Buttons */
+button {
+  margin-top: 25px;
+  background: #3B82F6;
+  color: white;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 500;
+}
+
+button:hover {
+  background: #2563EB;
+}
+
+/* Food Boxes */
+.food-section {
+  margin-top: 40px;
+  text-align: left;
+}
+
+.food-box {
+  background: rgba(255,255,255,0.03);
+  margin-bottom: 25px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.food-box h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #E5E7EB;
+}
+
+.food-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.food-box li {
+  padding: 9px 12px;
+  background: #1A1A1C;
+  border-radius: 10px;
+  margin: 6px 0;
+  border: 1px solid #2C2C2E;
+  color: #D4D4D8;
+}
+
+/* Back button */
+a {
+  color: #60A5FA;
+  margin-top: 25px;
+  text-decoration: none;
+  font-size: 15px;
+  display: inline-block;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity:1; transform: translateY(0);}
+}

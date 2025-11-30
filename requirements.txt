@@ -1,0 +1,14 @@
+audioread
+Flask
+ffmpeg-python
+joblib
+librosa
+matplotlib
+numpy
+pandas
+scikit-learn
+scipy
+soundfile
+torch
+tqdm
+transformers
